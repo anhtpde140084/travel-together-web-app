@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import 'bootstrap/dist/css/bootstrap.css';
-import { BrowserRouter } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // Put any other imports below so that CSS from your
 // components takes precedence over default styles.
 import 'font-awesome/css/font-awesome.min.css';
@@ -18,7 +18,9 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
-        <App />
+        <Routes>
+          <Route path="/*" element={<App />} />
+        </Routes>
       </BrowserRouter>
     </Provider>
   </React.StrictMode>,

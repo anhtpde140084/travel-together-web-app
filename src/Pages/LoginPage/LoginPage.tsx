@@ -1,17 +1,23 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import axios from '../../Api/axios';
 import { callApi } from '../../Config/AxiosCommon';
 import { BASE_URL } from '../../Config/Environment';
+import useAuth from '../../Hooks/useAuth';
 import { ApplicationState } from '../../Redux';
 import { onLogin } from '../../Redux/Actions/LoginAction';
 import "./Login.css";
+import imageLogin from '../../Assets/login-image-2.png';
+import useLocalStorage from '../../Hooks/useLocalStorage';
+const LOGIN_URL = 'auth/signin';
 const LoginPage = () => {
 
-    const dispatch = useDispatch();
 
     const navigate = useNavigate();
+    const location: any = useLocation();
+
+    const storage = useLocalStorage();
 
     const [username, setUsername] = useState<String>("");
 
@@ -22,9 +28,7 @@ const LoginPage = () => {
     );
 
     useEffect(() => {
-        if (localStorage.getItem("token")) {
-            navigate('/home')
-        }
+        console.log(process.env)
     }, []);
 
     const handleUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,21 +43,14 @@ const LoginPage = () => {
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
-            let response = await axios.post(`${BASE_URL}auth/signin`, {
-                username,
-                password
-            });
-            if (response.data.success) {
-                axios.defaults.headers.common[
-                    "Authorization"
-                ] = `Bearer ${response.data.data.accessToken}`;
-                if (response.data.data.accessToken) {
-                    let res2 = await axios.get(`${BASE_URL}user/current-user`);
-                    if (res2.data.success) {
-                        dispatch<any>(onLogin(response.data.data, res2.data.data));
-                        navigate('/home')
-                    }
-                }
+            const response = await callApi(storage.token, "POST", LOGIN_URL, null, {
+                username, password
+            })
+            if (response.success) {
+                localStorage.setItem("user", JSON.stringify(response?.data))
+                navigate("/");
+                setUsername('');
+                setPassword('');
             }
         } catch (error) {
 
@@ -63,25 +60,27 @@ const LoginPage = () => {
     return (
         <section className="vh-100">
             <div className="container-fluid h-custom">
+
                 <div className="row d-flex justify-content-center align-items-center h-100">
                     <div className="col-md-9 col-lg-6 col-xl-5">
-                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+                        <img src={imageLogin}
                             className="img-fluid" alt="Sample image" />
                     </div>
                     <div className="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                        <h1 style={{ color: "#00264B", paddingBottom: '50px' }}>Travel Together Login</h1>
                         <form onSubmit={handleLogin}>
                             <div className="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
                                 <p className="lead fw-normal mb-0 me-3">Sign in with</p>
                                 <button type="button" className="btn btn-primary btn-floating mx-1">
-                                    <i className="fa-brands fa-facebook"></i>
+                                    <i className="fa fa-facebook" aria-hidden="true"></i>
                                 </button>
 
-                                <button type="button" className="btn btn-primary btn-floating mx-1">
-                                    <i className="fab fa-twitter"></i>
+                                <button type="button" className="btn btn-danger btn-floating mx-1">
+                                    <i className="fa fa-google" aria-hidden="true"></i>
                                 </button>
 
-                                <button type="button" className="btn btn-primary btn-floating mx-1">
-                                    <i className="fab fa-linkedin-in"></i>
+                                <button type="button" className="btn btn-secondary btn-floating mx-1">
+                                    <i className="fa fa-github" aria-hidden="true"></i>
                                 </button>
                             </div>
 

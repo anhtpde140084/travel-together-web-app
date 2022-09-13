@@ -1,10 +1,19 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import PostBlog from '../../Components/BlogComponents/PostBlog';
+import PostListComponent from '../../Components/BlogComponents/PostListComponent';
 
 type Props = {}
 
 const HomePage = (props: Props) => {
+
+    useEffect(() => {
+
+    }, []);
+
     return (
-        <div>HomePage</div>
+        <>
+            <PostListComponent />
+        </>
     )
 }
 

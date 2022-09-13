@@ -27,7 +27,7 @@ export const callApi = async (
     headers: {
       ...getHeader(token),
     },
-    baseURL: process.env.CONFIG_SERVICE,
+    baseURL: process.env.REACT_APP_CONFIG_SERVICE,
     url: apiPath,
     params,
     data,
